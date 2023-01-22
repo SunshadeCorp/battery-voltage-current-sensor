@@ -2686,17 +2686,15 @@ design rules under a new name.</description>
 <contactref element="IC1" pad="IP-@17" route="any" routetag="G$1.IP-"/>
 <contactref element="IC1" pad="IP-@9" route="any" routetag="G$1.IP-"/>
 <contactref element="PS1" pad="1"/>
-<wire x1="50" y1="6" x2="50" y2="42.74" width="5" layer="16"/>
-<wire x1="50" y1="40.24" x2="50" y2="68.2" width="5" layer="16"/>
-<wire x1="50" y1="68.2" x2="52.2" y2="70.4" width="5" layer="16"/>
-<wire x1="5.89" y1="42.74" x2="50" y2="42.74" width="1" layer="16"/>
 <polygon width="0" layer="16" thermals="no">
 <vertex x="56" y="77"/>
 <vertex x="34" y="77"/>
 <vertex x="34" y="0"/>
 <vertex x="56" y="0"/>
 </polygon>
-<wire x1="49.878" y1="72.722" x2="52.2" y2="70.4" width="0.3048" layer="1"/>
+<wire x1="5.89" y1="42.74" x2="37.06" y2="42.74" width="1.016" layer="16"/>
+<wire x1="50" y1="29.8" x2="50" y2="6" width="1.016" layer="16"/>
+<wire x1="37.06" y1="42.74" x2="50" y2="29.8" width="1.016" layer="16"/>
 </signal>
 <signal name="N$8">
 <contactref element="R15" pad="1"/>
