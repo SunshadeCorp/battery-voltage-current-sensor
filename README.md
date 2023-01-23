@@ -13,4 +13,4 @@ Integrated supply voltage generation from the highvoltage source
 
 2x temperature sensors onboard for system monitoring and overload protection
 
-![alt text](https://github.com/SunshadeCorp/battery-voltage-current-sensor/blob/master/documentation/Board2D.png?raw=true)
+![alt text](https://github.com/SunshadeCorp/battery-voltage-current-sensor/blob/master/documentation/boardmarkings.png?raw=true)
