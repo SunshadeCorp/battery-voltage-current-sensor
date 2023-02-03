@@ -4,7 +4,7 @@
 #include <lwip/dns.h>
 #include <PubSubClient.h>
 
-#define intmax 32767.0
+#define intmax 32767.0f
 
 const char *ssid = "mob";
 const char *password = "12345678";
@@ -54,7 +54,7 @@ void callback(char *topic, byte *payload, unsigned int length)
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
-  for (int i = 0; i < length; i++)
+  for (unsigned int i = 0; i < length; i++)
   {
     Serial.print((char)payload[i]);
   }
@@ -63,13 +63,13 @@ void callback(char *topic, byte *payload, unsigned int length)
   // Switch on the LED if an 1 was received as first character
   if ((char)payload[0] == '1')
   {
-    digitalWrite(BUILTIN_LED, LOW); // Turn the LED on (Note that LOW is the voltage level
+    digitalWrite(LED_BUILTIN, LOW); // Turn the LED on (Note that LOW is the voltage level
     // but actually the LED is on; this is because
     // it is active low on the ESP-01)
   }
   else
   {
-    digitalWrite(BUILTIN_LED, HIGH); // Turn the LED off by making the voltage HIGH
+    digitalWrite(LED_BUILTIN, HIGH); // Turn the LED off by making the voltage HIGH
   }
 }
 
@@ -145,9 +145,9 @@ void loop()
   snprintf(msg, MSG_BUFFER_SIZE, "temp2 %f", temp2);
   client.publish("temp2", msg);
 
-  digitalWrite(BUILTIN_LED, LOW);
+  digitalWrite(LED_BUILTIN, LOW);
   delay(100);
-  digitalWrite(BUILTIN_LED, HIGH);
+  digitalWrite(LED_BUILTIN, HIGH);
 }
 
 float ReadCurrent()
@@ -158,10 +158,10 @@ float ReadCurrent()
   float offset = 2.545; // Offset of the hall sensor = 2,5V , should configurable over MQTT
 
   adc_value = ads.readADC_SingleEnded(1); // read analog value from ADC
-  Uin = ((adc_value / intmax) * 6.144);
+  Uin = ((adc_value / intmax) * 6.144f);
   Serial.print("In Voltage Current Sensor: ");
   Serial.println(Uin);
-  current = (Uin - offset) / 0.040; // 40mV/A
+  current = (Uin - offset) / 0.040f; // 40mV/A
   current = -current;
   Serial.print("Current: ");
   Serial.println(current);
@@ -184,7 +184,7 @@ float ReadVoltage()
   Serial.println(factor);
   adc_value = ads.readADC_SingleEnded(0);
 
-  Uin = ((adc_value / intmax) * 6.144);
+  Uin = ((adc_value / intmax) * 6.144f);
   Serial.print("Spannunng Eingang: ");
   Serial.println(Uin);
   snprintf(msg, MSG_BUFFER_SIZE, "Uin %f", Uin);
@@ -215,7 +215,7 @@ float ReadTemperature(int adc_pin)
   float Uin;
   adc_value = ads.readADC_SingleEnded(adc_pin); // lese Analogwert aus ADC chip
 
-  Uin = ((adc_value / intmax) * 6.144);
+  Uin = ((adc_value / intmax) * 6.144f);
   rt = ((rt1) * (Uin / uges) / (1 - (Uin / uges)));
   TKelvin2 = 1 / ((1 / Tn) + ((float)1 / b) * log((float)rt / rt1)); // ermittle die Temperatur in Kelvin
   temperature = TKelvin2 - kelvintemp;
