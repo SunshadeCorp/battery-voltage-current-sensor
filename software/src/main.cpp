@@ -117,9 +117,6 @@ void setup()
 
 void loop()
 {
-  delay(100);
-  // put your main code here, to run repeatedly:
-  Serial.println("bin da");
   if (!client.connected())
   {
     reconnect();
@@ -134,20 +131,21 @@ void loop()
   voltage = ReadVoltage();
   temp1 = ReadTemperature(2);
   temp2 = ReadTemperature(3);
+
+  client.publish("Init", "Init done");
   unsigned long now = millis();
-
-  snprintf(msg, MSG_BUFFER_SIZE, "Voltage %f", voltage);
-  client.publish("Voltage", msg);
-  snprintf(msg, MSG_BUFFER_SIZE, "Current %f", current);
-  client.publish("Current", msg);
-  snprintf(msg, MSG_BUFFER_SIZE, "temp1 %f", temp1);
-  client.publish("temp1", msg);
-  snprintf(msg, MSG_BUFFER_SIZE, "temp2 %f", temp2);
-  client.publish("temp2", msg);
-
   digitalWrite(LED_BUILTIN, LOW);
-  delay(100);
+  snprintf(msg, MSG_BUFFER_SIZE, "voltage %f", voltage);
+  client.publish("total_voltage", msg);
+  snprintf(msg, MSG_BUFFER_SIZE, "current %f", current);
+  client.publish("total_current", msg);
+  snprintf(msg, MSG_BUFFER_SIZE, "temperature1 %f", temp1);
+  client.publish("temp1", msg);
+  snprintf(msg, MSG_BUFFER_SIZE, "temperature2 %f", temp2);
+  client.publish("temp2", msg);
   digitalWrite(LED_BUILTIN, HIGH);
+  delay(100);
+
 }
 
 float ReadCurrent()
@@ -156,15 +154,10 @@ float ReadCurrent()
   float Uin;            // calculated input voltage at the input of ADC
   float current;        // calculated current
   float offset = 2.545; // Offset of the hall sensor = 2,5V , should configurable over MQTT
-
   adc_value = ads.readADC_SingleEnded(1); // read analog value from ADC
   Uin = ((adc_value / intmax) * 6.144f);
-  Serial.print("In Voltage Current Sensor: ");
-  Serial.println(Uin);
   current = (Uin - offset) / 0.040f; // 40mV/A
   current = -current;
-  Serial.print("Current: ");
-  Serial.println(current);
   return (current);
 }
 
@@ -173,25 +166,19 @@ float ReadVoltage()
   float adc_value;
   float Uin;
   float HV;
-  const float rges = 6800.0 + 10.0 * (100000.0);
-  const float r2 = 6800;
+  //const float rges = 6800.0 + 10.0 * (100000.0);
+  //const float r2 = 6800;
+  //manual voltage factor between input voltage and HV voltage
   float factor = 145.117;
 
-  int teiler = 10;
 
-  // divider1 = 1.0 / (r2 / rges);
-  Serial.print("factor 1: ");
-  Serial.println(factor);
   adc_value = ads.readADC_SingleEnded(0);
-
   Uin = ((adc_value / intmax) * 6.144f);
-  Serial.print("Spannunng Eingang: ");
-  Serial.println(Uin);
+  //Send raw input voltage
   snprintf(msg, MSG_BUFFER_SIZE, "Uin %f", Uin);
   client.publish("Uin", msg);
   HV = Uin * factor;
-  Serial.print("Spannungswert HV: ");
-  Serial.println(HV);
+
   return (HV);
 }
 
