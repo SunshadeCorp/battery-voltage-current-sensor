@@ -185,26 +185,23 @@ float ReadVoltage()
 float ReadTemperature(int adc_pin)
 {
   // https://www.mymakerstuff.de/2018/05/18/arduino-tutorial-der-temperatursensor/
-  float rt;
-  float rtnano;
+  float rt;     //restistance of the thermal resistor
   float rt1 = 10000.0;
   float uges = 5.0;
   float adc_value;
 
-  float untc;
+
   float b = 3434;
   float TKelvin;
-  float T;
   float kelvintemp = 273.15;
   float Tn = kelvintemp + 25; // Nenntemperatur in Kelvin
   float temperature;
-  float TKelvin2;
   float Uin;
   adc_value = ads.readADC_SingleEnded(adc_pin); // lese Analogwert aus ADC chip
 
   Uin = ((adc_value / intmax) * 6.144f);
   rt = ((rt1) * (Uin / uges) / (1 - (Uin / uges)));
-  TKelvin2 = 1 / ((1 / Tn) + ((float)1 / b) * log((float)rt / rt1)); // ermittle die Temperatur in Kelvin
-  temperature = TKelvin2 - kelvintemp;
+  TKelvin = 1 / ((1 / Tn) + ((float)1 / b) * log((float)rt / rt1)); // ermittle die Temperatur in Kelvin
+  temperature = TKelvin - kelvintemp;
   return temperature;
 }
