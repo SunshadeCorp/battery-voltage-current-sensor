@@ -12,7 +12,7 @@ const char *mqtt_server = "192.168.216.155";
 
 Adafruit_ADS1115 ads;
 WiFiClient espClient;
-PubSubClient client(espClient);
+PubSubClient client(mqtt_server, 1883, espClient);
 unsigned long lastMsg = 0;
 #define MSG_BUFFER_SIZE (50)
 char msg[MSG_BUFFER_SIZE];
@@ -84,11 +84,11 @@ void reconnect()
     String clientId = "ESP8266Client-";
     clientId += String(random(0xffff), HEX);
     // Attempt to connect
-    if (client.connect(clientId.c_str()))
+    if (client.connect(clientId.c_str(), mqtt_username, mqtt_password))
     {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      client.publish("outTopic", "hello world");
+      // client.publish("outTopic", "hello world");
       // ... and resubscribe
       client.subscribe("inTopic");
     }
@@ -106,7 +106,7 @@ void reconnect()
 void setup()
 {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(74880);
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.println("Starte Init vom Chip");
   ads.begin(0x48);
@@ -134,20 +134,20 @@ void loop()
   temp1 = ReadTemperature(2);
   temp2 = ReadTemperature(3);
 
-  client.publish("Init", "Init done");
-  unsigned long now = millis();
+  // client.publish("Init", "Init done");
+  // unsigned long now = millis();
+  client.publish("esp-total/uptime", String(millis()).c_str());
   digitalWrite(LED_BUILTIN, LOW);
-  snprintf(msg, MSG_BUFFER_SIZE, "voltage %f", voltage);
-  client.publish("total_voltage", msg);
-  snprintf(msg, MSG_BUFFER_SIZE, "current %f", current);
-  client.publish("total_current", msg);
-  snprintf(msg, MSG_BUFFER_SIZE, "temperature1 %f", temp1);
-  client.publish("temp1", msg);
-  snprintf(msg, MSG_BUFFER_SIZE, "temperature2 %f", temp2);
-  client.publish("temp2", msg);
+  snprintf(msg, MSG_BUFFER_SIZE, "%f", voltage);
+  client.publish("esp-total/total_voltage", msg);
+  snprintf(msg, MSG_BUFFER_SIZE, "%f", current);
+  client.publish("esp-total/total_current", msg);
+  snprintf(msg, MSG_BUFFER_SIZE, "%f", temp1);
+  client.publish("esp-total/temp1", msg);
+  snprintf(msg, MSG_BUFFER_SIZE, "%f", temp2);
+  client.publish("esp-total/temp2", msg);
   digitalWrite(LED_BUILTIN, HIGH);
-  delay(100);
-
+  delay(500);
 }
 
 float ReadCurrent()
@@ -162,7 +162,7 @@ float ReadCurrent()
   delay (10);
   adc_value = adc_value + ads.readADC_SingleEnded(1); // read analog value from ADC
 
-  Uin = (((adc_value/3.0) / intmax) * 6.144f);
+  Uin = (((adc_value/3.0f) / intmax) * 6.144f);
   current = (Uin - offset) / 0.040f; // 40mV/A
   current = -current;
   return (current);
@@ -187,8 +187,8 @@ float ReadVoltage()
 
   Uin = (((adc_value/3.0f) / intmax) * 6.144f);
   //Send raw input voltage
-  snprintf(msg, MSG_BUFFER_SIZE, "Uin %f", Uin);
-  client.publish("Uin", msg);
+  snprintf(msg, MSG_BUFFER_SIZE, "%f", Uin);
+  client.publish("esp-total/Uin", msg);
   HV = Uin * factor;
 
   return (HV);
