@@ -17,6 +17,7 @@ unsigned long lastMsg = 0;
 #define MSG_BUFFER_SIZE (50)
 char msg[MSG_BUFFER_SIZE];
 int value = 0;
+float current_offset;
 
 float ReadVoltage();                // Reads a voltage from an Input Pin of the ADC
 float ReadCurrent();                // Reads a current from an Input Pin of the ADC
@@ -113,6 +114,7 @@ void setup()
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
+  current_offset = ReadCurrent();
 }
 
 void loop()
@@ -155,7 +157,12 @@ float ReadCurrent()
   float current;        // calculated current
   float offset = 2.545; // Offset of the hall sensor = 2,5V , should configurable over MQTT
   adc_value = ads.readADC_SingleEnded(1); // read analog value from ADC
-  Uin = ((adc_value / intmax) * 6.144f);
+  delay (10);
+  adc_value = adc_value + ads.readADC_SingleEnded(1); // read analog value from ADC
+  delay (10);
+  adc_value = adc_value + ads.readADC_SingleEnded(1); // read analog value from ADC
+
+  Uin = (((adc_value/3.0) / intmax) * 6.144f);
   current = (Uin - offset) / 0.040f; // 40mV/A
   current = -current;
   return (current);
@@ -173,7 +180,12 @@ float ReadVoltage()
 
 
   adc_value = ads.readADC_SingleEnded(0);
-  Uin = ((adc_value / intmax) * 6.144f);
+  delay (10);
+  adc_value = adc_value + ads.readADC_SingleEnded(0);
+  delay (10);
+  adc_value = adc_value + ads.readADC_SingleEnded(0);
+
+  Uin = (((adc_value/3.0f) / intmax) * 6.144f);
   //Send raw input voltage
   snprintf(msg, MSG_BUFFER_SIZE, "Uin %f", Uin);
   client.publish("Uin", msg);
