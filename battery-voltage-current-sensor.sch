@@ -172,10 +172,10 @@
 <package name="PV1527B12R3">
 <description>&lt;b&gt;PV15-27B12R3-2&lt;/b&gt;&lt;br&gt;
 </description>
-<pad name="1" x="0" y="0" drill="1.5" diameter="2.25" shape="square"/>
-<pad name="2" x="0" y="-20" drill="1.5" diameter="2.25"/>
-<pad name="3" x="62.09" y="-11.5" drill="1.5" diameter="2.25"/>
-<pad name="4" x="62.09" y="11.5" drill="1.5" diameter="2.25"/>
+<pad name="1" x="0" y="-3.81" drill="1.5" diameter="2.25" shape="square"/>
+<pad name="2" x="0" y="-23.81" drill="1.5" diameter="2.25"/>
+<pad name="3" x="62.09" y="-15.31" drill="1.5" diameter="2.25"/>
+<pad name="4" x="62.09" y="7.69" drill="1.5" diameter="2.25"/>
 <text x="31.045" y="-4.25" size="1.27" layer="25" align="center">&gt;NAME</text>
 <text x="31.045" y="-4.25" size="1.27" layer="27" align="center">&gt;VALUE</text>
 <wire x1="-3.955" y1="-28.25" x2="66.045" y2="-28.25" width="0.1" layer="51"/>
@@ -190,9 +190,7 @@
 <wire x1="67.045" y1="-29.25" x2="67.045" y2="20.75" width="0.1" layer="51"/>
 <wire x1="67.045" y1="20.75" x2="-4.955" y2="20.75" width="0.1" layer="51"/>
 <wire x1="-4.955" y1="20.75" x2="-4.955" y2="-29.25" width="0.1" layer="51"/>
-<wire x1="-4.5" y1="0" x2="-4.5" y2="0" width="0.1" layer="21"/>
 <wire x1="-4.5" y1="0" x2="-4.6" y2="0" width="0.1" layer="21" curve="180"/>
-<wire x1="-4.6" y1="0" x2="-4.6" y2="0" width="0.1" layer="21"/>
 <wire x1="-4.6" y1="0" x2="-4.5" y2="0" width="0.1" layer="21" curve="180"/>
 </package>
 <package name="SOP50P490X110-10N">
@@ -912,7 +910,7 @@ Source: &lt;a href="https://datasheet.datasheetarchive.com/originals/distributor
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="MOUNT-PAD-SQUARE" urn="urn:adsk.eagle:component:14302/2" prefix="H" library_version="2">
+<deviceset name="MOUNT-PAD-SQUARE" urn="urn:adsk.eagle:component:14302/1" prefix="H" library_version="2">
 <description>&lt;b&gt;MOUNTING PAD&lt;/b&gt;, square</description>
 <gates>
 <gate name="G$1" symbol="MOUNT-PAD-SQUARE" x="0" y="0"/>
@@ -926,9 +924,7 @@ Source: &lt;a href="https://datasheet.datasheetarchive.com/originals/distributor
 <package3dinstance package3d_urn="urn:adsk.eagle:package:14300/1"/>
 </package3dinstances>
 <technologies>
-<technology name="">
-<attribute name="POPULARITY" value="3" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 <device name="3.0" package="3,0-PAD-SQUARE">
@@ -939,9 +935,7 @@ Source: &lt;a href="https://datasheet.datasheetarchive.com/originals/distributor
 <package3dinstance package3d_urn="urn:adsk.eagle:package:14290/1"/>
 </package3dinstances>
 <technologies>
-<technology name="">
-<attribute name="POPULARITY" value="0" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 <device name="3.2" package="3,2-PAD-SQUARE">
@@ -952,9 +946,7 @@ Source: &lt;a href="https://datasheet.datasheetarchive.com/originals/distributor
 <package3dinstance package3d_urn="urn:adsk.eagle:package:14292/1"/>
 </package3dinstances>
 <technologies>
-<technology name="">
-<attribute name="POPULARITY" value="0" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 <device name="3.3" package="3,3-PAD-SQUARE">
@@ -965,9 +957,7 @@ Source: &lt;a href="https://datasheet.datasheetarchive.com/originals/distributor
 <package3dinstance package3d_urn="urn:adsk.eagle:package:14293/1"/>
 </package3dinstances>
 <technologies>
-<technology name="">
-<attribute name="POPULARITY" value="0" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 <device name="3.6" package="3,6-PAD-SQUARE">
@@ -978,9 +968,7 @@ Source: &lt;a href="https://datasheet.datasheetarchive.com/originals/distributor
 <package3dinstance package3d_urn="urn:adsk.eagle:package:14294/1"/>
 </package3dinstances>
 <technologies>
-<technology name="">
-<attribute name="POPULARITY" value="0" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 <device name="4.1" package="4,1-PAD-SQUARE">
@@ -991,9 +979,7 @@ Source: &lt;a href="https://datasheet.datasheetarchive.com/originals/distributor
 <package3dinstance package3d_urn="urn:adsk.eagle:package:14296/1"/>
 </package3dinstances>
 <technologies>
-<technology name="">
-<attribute name="POPULARITY" value="0" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 <device name="4.3" package="4,3-PAD-SQUARE">
@@ -1004,9 +990,7 @@ Source: &lt;a href="https://datasheet.datasheetarchive.com/originals/distributor
 <package3dinstance package3d_urn="urn:adsk.eagle:package:14297/1"/>
 </package3dinstances>
 <technologies>
-<technology name="">
-<attribute name="POPULARITY" value="0" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 <device name="4.5" package="4,5-PAD-SQUARE">
@@ -1017,9 +1001,7 @@ Source: &lt;a href="https://datasheet.datasheetarchive.com/originals/distributor
 <package3dinstance package3d_urn="urn:adsk.eagle:package:14295/1"/>
 </package3dinstances>
 <technologies>
-<technology name="">
-<attribute name="POPULARITY" value="0" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 <device name="5.0" package="5,0-PAD-SQUARE">
@@ -1030,9 +1012,7 @@ Source: &lt;a href="https://datasheet.datasheetarchive.com/originals/distributor
 <package3dinstance package3d_urn="urn:adsk.eagle:package:14298/1"/>
 </package3dinstances>
 <technologies>
-<technology name="">
-<attribute name="POPULARITY" value="0" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 <device name="5.5" package="5,5-PAD-SQUARE">
@@ -1043,9 +1023,7 @@ Source: &lt;a href="https://datasheet.datasheetarchive.com/originals/distributor
 <package3dinstance package3d_urn="urn:adsk.eagle:package:14299/1"/>
 </package3dinstances>
 <technologies>
-<technology name="">
-<attribute name="POPULARITY" value="0" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
@@ -20685,19 +20663,6 @@ Source: http://eshop.phoenixcontact.com .. 1729128.pdf</description>
 <label x="200.66" y="363.22" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="IC1" gate="G$1" pin="GND"/>
-<wire x1="15.24" y1="162.56" x2="22.86" y2="162.56" width="0.1524" layer="91"/>
-<wire x1="22.86" y1="162.56" x2="22.86" y2="154.94" width="0.1524" layer="91"/>
-<label x="20.32" y="152.4" size="1.778" layer="95"/>
-<pinref part="C14" gate="G$1" pin="2"/>
-<wire x1="22.86" y1="154.94" x2="40.64" y2="154.94" width="0.1524" layer="91"/>
-<wire x1="40.64" y1="154.94" x2="40.64" y2="162.56" width="0.1524" layer="91"/>
-<pinref part="C15" gate="G$1" pin="2"/>
-<wire x1="40.64" y1="154.94" x2="45.72" y2="154.94" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="154.94" x2="45.72" y2="162.56" width="0.1524" layer="91"/>
-<junction x="40.64" y="154.94"/>
-</segment>
-<segment>
 <pinref part="R10" gate="G$1" pin="1"/>
 <wire x1="142.24" y1="297.18" x2="142.24" y2="294.64" width="0.1524" layer="91"/>
 <wire x1="142.24" y1="294.64" x2="134.62" y2="294.64" width="0.1524" layer="91"/>
@@ -20726,6 +20691,34 @@ Source: http://eshop.phoenixcontact.com .. 1729128.pdf</description>
 <wire x1="143.51" y1="73.66" x2="137.16" y2="73.66" width="0.1524" layer="91"/>
 <junction x="137.16" y="73.66"/>
 <label x="134.62" y="45.72" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="H3" gate="G$1" pin="MOUNT"/>
+<pinref part="IC1" gate="G$1" pin="IP+"/>
+<wire x1="-2.54" y1="195.58" x2="0" y2="195.58" width="0.1524" layer="91"/>
+<wire x1="0" y1="195.58" x2="0" y2="190.5" width="0.1524" layer="91"/>
+<label x="-15.24" y="195.58" size="1.778" layer="95"/>
+<wire x1="0" y1="190.5" x2="0" y2="180.34" width="0.1524" layer="91"/>
+<wire x1="-63.5" y1="190.5" x2="0" y2="190.5" width="0.1524" layer="91"/>
+<pinref part="R24" gate="G$1" pin="1"/>
+<wire x1="-63.5" y1="152.4" x2="-63.5" y2="190.5" width="0.1524" layer="91"/>
+<label x="-63.5" y="195.58" size="1.778" layer="95" rot="R180"/>
+<junction x="0" y="190.5"/>
+<wire x1="0" y1="190.5" x2="66.04" y2="190.5" width="0.1524" layer="91"/>
+<wire x1="66.04" y1="190.5" x2="66.04" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="G$1" pin="GND"/>
+<wire x1="15.24" y1="162.56" x2="22.86" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="22.86" y1="162.56" x2="22.86" y2="154.94" width="0.1524" layer="91"/>
+<label x="20.32" y="152.4" size="1.778" layer="95"/>
+<pinref part="C14" gate="G$1" pin="2"/>
+<wire x1="22.86" y1="154.94" x2="40.64" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="154.94" x2="40.64" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="C15" gate="G$1" pin="2"/>
+<wire x1="40.64" y1="154.94" x2="45.72" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="154.94" x2="45.72" y2="162.56" width="0.1524" layer="91"/>
+<junction x="40.64" y="154.94"/>
+<wire x1="66.04" y1="154.94" x2="45.72" y2="154.94" width="0.1524" layer="91"/>
+<junction x="45.72" y="154.94"/>
 </segment>
 </net>
 <net name="+5V/1" class="0">
@@ -20872,21 +20865,6 @@ Source: http://eshop.phoenixcontact.com .. 1729128.pdf</description>
 <wire x1="195.58" y1="317.5" x2="187.96" y2="317.5" width="0.1524" layer="91"/>
 <junction x="195.58" y="317.5"/>
 <label x="226.06" y="317.5" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="HV-IN" class="1">
-<segment>
-<pinref part="H3" gate="G$1" pin="MOUNT"/>
-<pinref part="IC1" gate="G$1" pin="IP+"/>
-<wire x1="-2.54" y1="195.58" x2="0" y2="195.58" width="0.1524" layer="91"/>
-<wire x1="0" y1="195.58" x2="0" y2="190.5" width="0.1524" layer="91"/>
-<label x="-15.24" y="195.58" size="1.778" layer="95"/>
-<wire x1="0" y1="190.5" x2="0" y2="180.34" width="0.1524" layer="91"/>
-<wire x1="-63.5" y1="190.5" x2="0" y2="190.5" width="0.1524" layer="91"/>
-<pinref part="R24" gate="G$1" pin="1"/>
-<wire x1="-63.5" y1="152.4" x2="-63.5" y2="190.5" width="0.1524" layer="91"/>
-<label x="-63.5" y="195.58" size="1.778" layer="95" rot="R180"/>
-<junction x="0" y="190.5"/>
 </segment>
 </net>
 <net name="N$8" class="0">
