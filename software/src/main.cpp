@@ -1,69 +1,101 @@
 #include <Adafruit_ADS1X15.h>
 #include <Arduino.h>
+#include <ESP8266httpUpdate.h>
 #include <ESP8266WiFi.h>
 #include <lwip/dns.h>
 #include <PubSubClient.h>
 
-#define intmax 32767.0f
+#include "config.h"
+#include "version.h"
 
-const char *ssid = "mob";
-const char *password = "12345678";
-const char *mqtt_server = "192.168.216.155";
+#define intmax 32767.0f
 
 Adafruit_ADS1115 ads;
 WiFiClient espClient;
-PubSubClient client(mqtt_server, 1883, espClient);
-unsigned long lastMsg = 0;
-#define MSG_BUFFER_SIZE (50)
+PubSubClient client(mqtt_server, mqtt_port, espClient);
+
+constexpr unsigned long MEASURE_INTERVAL = 500;
+constexpr unsigned long BLINK_TIME = 5000;
+
+String hostname;
+String sensor_topic("esp-total");
+
+unsigned long last_blink = 0;
+unsigned long last_connection = 0;
+unsigned long last_measure = 0;
+
+#define MSG_BUFFER_SIZE 50
 char msg[MSG_BUFFER_SIZE];
 int value = 0;
-float current_offset;
+float current_offset = 0.0f;
 
-float ReadVoltage();                // Reads a voltage from an Input Pin of the ADC
-float ReadCurrent();                // Reads a current from an Input Pin of the ADC
-float ReadTemperature(int adc_pin); // Reads a temperatuer measured by a NTC from the Input Pin of the ADC
+float readVoltage();                // Reads a voltage from an Input Pin of the ADC
+float readCurrent();                // Reads a current from an Input Pin of the ADC
+float readTemperature(int adc_pin); // Reads a temperatuer measured by a NTC from the Input Pin of the ADC
 
-// connect to wifi
-void setup_wifi() {
-
-    delay(10);
-    // We start by connecting to a WiFi network
+void connectWifi() {
     Serial.println();
-    Serial.print("Connecting to ");
+    Serial.print("connecting to ");
     Serial.println(ssid);
-
+    ESP8266WiFiClass::persistent(false);
+    WiFi.softAPdisconnect(true);
     WiFi.mode(WIFI_STA);
+    WiFi.hostname(hostname);
     WiFi.begin(ssid, password);
-
     while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
+        delay(100);
         Serial.print(".");
     }
-
-    randomSeed(micros());
-
     Serial.println("");
     Serial.println("WiFi connected");
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
+
+    Serial.print("DNS1: ");
+    Serial.println(IPAddress(dns_getserver(0)));
+    Serial.print("DNS2: ");
+    Serial.println(IPAddress(dns_getserver(1)));
 }
 
 void callback(char *topic, byte *payload, unsigned int length) {
-    Serial.print("Message arrived [");
-    Serial.print(topic);
-    Serial.print("] ");
-    for (unsigned int i = 0; i < length; i++) {
-        Serial.print((char) payload[i]);
-    }
-    Serial.println();
-
-    // Switch on the LED if an 1 was received as first character
-    if ((char) payload[0] == '1') {
-        digitalWrite(LED_BUILTIN, LOW); // Turn the LED on (Note that LOW is the voltage level
-        // but actually the LED is on; this is because
-        // it is active low on the ESP-01)
-    } else {
-        digitalWrite(LED_BUILTIN, HIGH); // Turn the LED off by making the voltage HIGH
+    String topic_string = String(topic);
+    String payload_string = String();
+    payload_string.concat((char *) payload, length);
+    if (topic_string == sensor_topic + "/blink") {
+        last_blink = millis();
+    } else if (topic_string == sensor_topic + "/restart") {
+        if (payload_string == "1") {
+            EspClass::restart();
+        }
+    } else if (topic_string == sensor_topic + "/ota") {
+        client.publish((sensor_topic + "/ota_start").c_str(),
+                       (String("ota started [") + payload_string + "] (" + millis() + ")").c_str());
+        client.publish((sensor_topic + "/ota_url").c_str(),
+                       (String("https://") + ota_server + payload_string).c_str());
+        WiFiClientSecure client_secure;
+        client_secure.setTrustAnchors(&cert);
+        client_secure.setTimeout(60);
+        ESPhttpUpdate.setLedPin(LED_BUILTIN, HIGH);
+        switch (ESPhttpUpdate.update(client_secure, String("https://") + ota_server + payload_string)) {
+            case HTTP_UPDATE_FAILED: {
+                String error_string = String("HTTP_UPDATE_FAILED Error (");
+                error_string += ESPhttpUpdate.getLastError();
+                error_string += "): ";
+                error_string += ESPhttpUpdate.getLastErrorString();
+                error_string += "\n";
+                Serial.println(error_string);
+                client.publish((sensor_topic + "/ota_ret").c_str(), error_string.c_str());
+            }
+                break;
+            case HTTP_UPDATE_NO_UPDATES:
+                Serial.println("HTTP_UPDATE_NO_UPDATES");
+                client.publish((sensor_topic + "/ota_ret").c_str(), "HTTP_UPDATE_NO_UPDATES");
+                break;
+            case HTTP_UPDATE_OK:
+                Serial.println("HTTP_UPDATE_OK");
+                client.publish((sensor_topic + "/ota_ret").c_str(), "HTTP_UPDATE_OK");
+                break;
+        }
     }
 }
 
@@ -71,71 +103,98 @@ void reconnect() {
     // Loop until we're reconnected
     while (!client.connected()) {
         Serial.print("Attempting MQTT connection...");
-        // Create a random client ID
-        String clientId = "ESP8266Client-";
-        clientId += String(random(0xffff), HEX);
         // Attempt to connect
-        if (client.connect(clientId.c_str(), mqtt_username, mqtt_password)) {
+        if (client.connect(hostname.c_str(), mqtt_username, mqtt_password, (sensor_topic + "/available").c_str(), 0,
+                           true, "offline")) {
             Serial.println("connected");
             // Once connected, publish an announcement...
-            // client.publish("outTopic", "hello world");
+            client.publish((sensor_topic + "/available").c_str(), "online", true);
+            client.publish((sensor_topic + "/version").c_str(), VERSION, true);
+            client.publish((sensor_topic + "/build_timestamp").c_str(), BUILD_TIMESTAMP, true);
             // ... and resubscribe
-            client.subscribe("inTopic");
+            client.subscribe((sensor_topic + "/blink").c_str());
+            client.subscribe((sensor_topic + "/restart").c_str());
+            client.subscribe((sensor_topic + "/ota").c_str());
         } else {
             Serial.print("failed, rc=");
             Serial.print(client.state());
-            Serial.println(" try again in 5 seconds");
+            //   DEBUG_PRINTLN(" try again in 5 seconds");
             // Wait 5 seconds before retrying
-            delay(5000);
+            // delay(5000);
+            if (last_connection != 0 && millis() - last_connection >= 30000) {
+                EspClass::restart();
+            }
+            delay(1000);
         }
     }
 }
 
 void setup() {
-    // put your setup code here, to run once:
     Serial.begin(74880);
     pinMode(LED_BUILTIN, OUTPUT);
+
     Serial.println("Starte Init vom Chip");
     ads.begin(0x48);
     Serial.println("Chip Init done");
-    setup_wifi();
-    client.setServer(mqtt_server, 1883);
+    current_offset = readCurrent();
+
+    uint8_t mac[6];
+    WiFi.macAddress(mac);
+    char mac_string[6 * 2 + 1] = {0};
+    snprintf(mac_string, 6 * 2 + 1, "%02x%02x%02x%02x%02x%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    hostname = String("bvc-sensor-") + mac_string;
+    Serial.println(hostname);
+
+    connectWifi();
+    randomSeed(micros());
     client.setCallback(callback);
-    current_offset = ReadCurrent();
 }
 
 void loop() {
+    /*
+     * MQTT reconnect if needed
+     */
     if (!client.connected()) {
         reconnect();
     }
+    last_connection = millis();
     client.loop();
-    float current;
-    float voltage;
-    float temp1;
-    float temp2;
 
-    current = ReadCurrent();
-    voltage = ReadVoltage();
-    temp1 = ReadTemperature(2);
-    temp2 = ReadTemperature(3);
+    if (millis() - last_measure > MEASURE_INTERVAL) {
+        last_measure = millis();
 
-    // client.publish("Init", "Init done");
-    // unsigned long now = millis();
-    client.publish("esp-total/uptime", String(millis()).c_str());
-    digitalWrite(LED_BUILTIN, LOW);
-    snprintf(msg, MSG_BUFFER_SIZE, "%f", voltage);
-    client.publish("esp-total/total_voltage", msg);
-    snprintf(msg, MSG_BUFFER_SIZE, "%f", current);
-    client.publish("esp-total/total_current", msg);
-    snprintf(msg, MSG_BUFFER_SIZE, "%f", temp1);
-    client.publish("esp-total/temp1", msg);
-    snprintf(msg, MSG_BUFFER_SIZE, "%f", temp2);
-    client.publish("esp-total/temp2", msg);
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(500);
+        float current;
+        float voltage;
+        float temp1;
+        float temp2;
+
+        current = readCurrent() - current_offset;
+        voltage = readVoltage();
+        temp1 = readTemperature(2);
+        temp2 = readTemperature(3);
+
+        client.publish((sensor_topic + "/uptime").c_str(), String(millis()).c_str());
+        digitalWrite(LED_BUILTIN, LOW);
+        snprintf(msg, MSG_BUFFER_SIZE, "%f", voltage);
+        client.publish((sensor_topic + "/total_voltage").c_str(), msg);
+        snprintf(msg, MSG_BUFFER_SIZE, "%f", current);
+        client.publish((sensor_topic + "/total_current").c_str(), msg);
+        snprintf(msg, MSG_BUFFER_SIZE, "%f", temp1);
+        client.publish((sensor_topic + "/temp1").c_str(), msg);
+        snprintf(msg, MSG_BUFFER_SIZE, "%f", temp2);
+        client.publish((sensor_topic + "/temp2").c_str(), msg);
+        digitalWrite(LED_BUILTIN, HIGH);
+    }
+    if (millis() - last_blink < BLINK_TIME) {
+        if ((millis() - last_blink) % 100 < 50) {
+            digitalWrite(LED_BUILTIN, HIGH);
+        } else {
+            digitalWrite(LED_BUILTIN, LOW);
+        }
+    }
 }
 
-float ReadCurrent() {
+float readCurrent() {
     float adc_value;      // raw value from the ADConverter
     float Uin;            // calculated input voltage at the input of ADC
     float current;        // calculated current
@@ -152,7 +211,7 @@ float ReadCurrent() {
     return (current);
 }
 
-float ReadVoltage() {
+float readVoltage() {
     float adc_value;
     float Uin;
     float HV;
@@ -177,7 +236,7 @@ float ReadVoltage() {
     return (HV);
 }
 
-float ReadTemperature(int adc_pin) {
+float readTemperature(int adc_pin) {
     // https://www.mymakerstuff.de/2018/05/18/arduino-tutorial-der-temperatursensor/
     float rt;     //restistance of the thermal resistor
     float rt1 = 10000.0;
