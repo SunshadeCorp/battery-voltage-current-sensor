@@ -1,0 +1,3 @@
+[submodule "software/platformio_version_increment"]
+	path = software/platformio_version_increment
+	url = https://github.com/jesseklm/platformio_version_increment.git
