@@ -218,7 +218,7 @@ float readVoltage() {
     //const float rges = 6800.0 + 10.0 * (100000.0);
     //const float r2 = 6800;
     //manual voltage factor between input voltage and HV voltage
-    float factor = 145.117;
+    float factor = 148.52f;
 
 
     adc_value = ads.readADC_SingleEnded(0);
